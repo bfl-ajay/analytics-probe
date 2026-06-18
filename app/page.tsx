@@ -9,12 +9,15 @@ export default function Home() {
   const [dbConnection, setDbConnection] = useState<DatabaseConnection | null>(
     null
   );
-  const [isConnected, setIsConnected] = useState(false);
+
+  const handleConnect = (connection: DatabaseConnection) => {
+    setDbConnection(connection);
+  };
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {!isConnected ? (
-        <DatabaseConnectionModal onConnect={setDbConnection} />
+      {!dbConnection ? (
+        <DatabaseConnectionModal onConnect={handleConnect} />
       ) : (
         <ReportBuilder dbConnection={dbConnection} />
       )}
