@@ -133,28 +133,31 @@ export default function ChartWidget({
     "#ec4899",
   ];
 
+  const xAxisKey = config.xAxis || (data[0] ? Object.keys(data[0])[0] : "");
+  const yAxisKey = config.yAxis || (data[0] ? Object.keys(data[0])[1] || Object.keys(data[0])[0] : "");
+
   const renderChart = () => {
     switch (config.chartType) {
       case "bar":
         return (
           <BarChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey={config.xAxis} />
+            <XAxis dataKey={xAxisKey} />
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey={config.yAxis} fill="#3b82f6" />
+            <Bar dataKey={yAxisKey} fill="#3b82f6" />
           </BarChart>
         );
       case "line":
         return (
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey={config.xAxis} />
+            <XAxis dataKey={xAxisKey} />
             <YAxis />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey={config.yAxis} stroke="#3b82f6" />
+            <Line type="monotone" dataKey={yAxisKey} stroke="#3b82f6" />
           </LineChart>
         );
       case "pie":
@@ -162,8 +165,8 @@ export default function ChartWidget({
           <PieChart>
             <Pie
               data={data}
-              dataKey={config.yAxis}
-              nameKey={config.xAxis}
+              dataKey={yAxisKey}
+              nameKey={xAxisKey}
               cx="50%"
               cy="50%"
               outerRadius={80}
@@ -185,11 +188,11 @@ export default function ChartWidget({
         return (
           <AreaChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey={config.xAxis} />
+            <XAxis dataKey={xAxisKey} />
             <YAxis />
             <Tooltip />
             <Legend />
-            <Area type="monotone" dataKey={config.yAxis} fill="#3b82f6" />
+            <Area type="monotone" dataKey={yAxisKey} fill="#3b82f6" />
           </AreaChart>
         );
     }

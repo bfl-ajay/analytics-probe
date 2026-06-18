@@ -6,9 +6,11 @@ import type {
   DatabaseConnection,
   DatabaseTable,
   ReportWidget,
+  DataModel,
 } from "@/types";
 import ChartWidget from "./widgets/ChartWidget";
 import TableWidget from "./widgets/TableWidget";
+import KPIWidget from "./widgets/KPIWidget";
 import WidgetConfigPanel from "./WidgetConfigPanel";
 
 interface ReportCanvasProps {
@@ -17,6 +19,7 @@ interface ReportCanvasProps {
   onUpdateWidget: (id: string, updates: Partial<ReportWidget>) => void;
   onRemoveWidget: (id: string) => void;
   dbConnection: DatabaseConnection | null;
+  dataModel?: DataModel | null;
 }
 
 export default function ReportCanvas({
@@ -25,6 +28,7 @@ export default function ReportCanvas({
   onUpdateWidget,
   onRemoveWidget,
   dbConnection,
+  dataModel,
 }: ReportCanvasProps) {
   const [selectedWidgetId, setSelectedWidgetId] = useState<string | null>(null);
   const [configPanelOpen, setConfigPanelOpen] = useState(false);
@@ -102,11 +106,18 @@ export default function ReportCanvas({
                     tables={tables}
                     dbConnection={dbConnection}
                   />
-                ) : (
+                ) : widget.type === "table" ? (
                   <TableWidget
                     widget={widget}
                     tables={tables}
                     dbConnection={dbConnection}
+                  />
+                ) : (
+                  <KPIWidget
+                    widget={widget}
+                    tables={tables}
+                    dbConnection={dbConnection}
+                    dataModel={dataModel}
                   />
                 )}
               </div>

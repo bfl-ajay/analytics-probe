@@ -13,7 +13,6 @@ interface WidgetConfigPanelProps {
 
 export default function WidgetConfigPanel({
   widget,
-  tables,
   onClose,
   onUpdate,
 }: WidgetConfigPanelProps) {
@@ -31,8 +30,6 @@ export default function WidgetConfigPanel({
     }
     setExpandedSections(newExpanded);
   };
-
-  const selectedTable = tables.find((t) => t.name === widget.config.table);
 
   const handleTitleChange = (newTitle: string) => {
     setTitle(newTitle);
@@ -87,190 +84,21 @@ export default function WidgetConfigPanel({
                   Widget Type
                 </label>
                 <p className="text-sm text-gray-600 capitalize">
-                  {widget.type === "chart" ? "Chart" : "Table"}
+                  {widget.type === "chart"
+                    ? "Chart"
+                    : widget.type === "table"
+                      ? "Table"
+                      : "KPI"}
                 </p>
               </div>
-            </div>
-          )}
-        </div>
 
-        {/* Data Source */}
-        <div className="border-b border-gray-200">
-          <button
-            onClick={() => toggleSection("data")}
-            className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition text-left"
-          >
-            <span className="font-medium text-gray-900">Data Source</span>
-            <ChevronDown
-              className={`w-4 h-4 transition ${
-                expandedSections.has("data") ? "" : "-rotate-90"
-              }`}
-            />
-          </button>
-
-          {expandedSections.has("data") && (
-            <div className="px-4 pb-4 space-y-3">
-              <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">
-                  Table
-                </label>
-                <select
-                  value={widget.config.table}
-                  onChange={(e) => {
-                    onUpdate({
-                      config: {
-                        ...widget.config,
-                        table: e.target.value,
-                      },
-                    });
-                  }}
-                  className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 outline-none"
-                >
-                  <option value="">Select table...</option>
-                  {tables.map((t) => (
-                    <option key={t.name} value={t.name}>
-                      {t.name}
-                    </option>
-                  ))}
-                </select>
+              <div className="bg-blue-50 border border-blue-200 rounded p-3">
+                <p className="text-xs text-blue-900">
+                  <strong>Tip:</strong> Configure this widget by editing the
+                  Query Builder. Select columns, apply filters, and set
+                  aggregations there.
+                </p>
               </div>
-
-              {selectedTable && widget.type === "chart" && (
-                <>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
-                      X-Axis Column
-                    </label>
-                    <select
-                      value={(widget.config as any).xAxis || ""}
-                      onChange={(e) => {
-                        onUpdate({
-                          config: {
-                            ...widget.config,
-                            xAxis: e.target.value,
-                          },
-                        });
-                      }}
-                      className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 outline-none"
-                    >
-                      <option value="">Select column...</option>
-                      {selectedTable.columns.map((c) => (
-                        <option key={c.name} value={c.name}>
-                          {c.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
-                      Y-Axis Column
-                    </label>
-                    <select
-                      value={(widget.config as any).yAxis || ""}
-                      onChange={(e) => {
-                        onUpdate({
-                          config: {
-                            ...widget.config,
-                            yAxis: e.target.value,
-                          },
-                        });
-                      }}
-                      className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 outline-none"
-                    >
-                      <option value="">Select column...</option>
-                      {selectedTable.columns.map((c) => (
-                        <option key={c.name} value={c.name}>
-                          {c.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
-                      Chart Type
-                    </label>
-                    <select
-                      value={(widget.config as any).chartType || "bar"}
-                      onChange={(e) => {
-                        onUpdate({
-                          config: {
-                            ...widget.config,
-                            chartType: e.target.value as any,
-                          },
-                        });
-                      }}
-                      className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 outline-none"
-                    >
-                      <option value="bar">Bar Chart</option>
-                      <option value="line">Line Chart</option>
-                      <option value="pie">Pie Chart</option>
-                      <option value="area">Area Chart</option>
-                    </select>
-                  </div>
-                </>
-              )}
-
-              {selectedTable && widget.type === "table" && (
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">
-                    Columns to Display
-                  </label>
-                  <div className="space-y-2">
-                    {selectedTable.columns.map((c) => (
-                      <label
-                        key={c.name}
-                        className="flex items-center gap-2 text-sm"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={(
-                            (widget.config as any).columns || []
-                          ).includes(c.name)}
-                          onChange={(e) => {
-                            const current = (widget.config as any).columns || [];
-                            const updated = e.target.checked
-                              ? [...current, c.name]
-                              : current.filter((col: string) => col !== c.name);
-                            onUpdate({
-                              config: {
-                                ...widget.config,
-                                columns: updated,
-                              },
-                            });
-                          }}
-                          className="rounded"
-                        />
-                        <span>{c.name}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Styling */}
-        <div className="border-b border-gray-200">
-          <button
-            onClick={() => toggleSection("style")}
-            className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition text-left"
-          >
-            <span className="font-medium text-gray-900">Styling</span>
-            <ChevronDown
-              className={`w-4 h-4 transition ${
-                expandedSections.has("style") ? "" : "-rotate-90"
-              }`}
-            />
-          </button>
-
-          {expandedSections.has("style") && (
-            <div className="px-4 pb-4 space-y-3">
-              <p className="text-xs text-gray-500">
-                Styling options coming soon
-              </p>
             </div>
           )}
         </div>

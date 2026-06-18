@@ -113,7 +113,9 @@ export default function TableWidget({
 
   const columns =
     displayColumns && displayColumns.length > 0
-      ? displayColumns
+      ? displayColumns.map((col) =>
+          typeof col === "string" ? col : col.column
+        )
       : Object.keys(data[0] || {});
 
   return (
